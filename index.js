@@ -11,4 +11,4 @@ app.get("/",(req,res)=>{
     res.send({name:"Hkk"})
 })
 
-app.listen(port)
+app.listen( process.env.PORT || port)
