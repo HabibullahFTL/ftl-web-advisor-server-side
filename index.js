@@ -10,6 +10,8 @@ const app = express();
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.ummk1.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
+app.use(express.json())
+app.use(express.urlencoded({ extended: false }))
 app.use(cors())
 
 // Present Date & Time
@@ -31,6 +33,7 @@ client.connect(err => {
     } else {
         // ============ [ For Creating new service ]==============
         app.post('/create-service', (req, res) => {
+            console.log(req.body);
             serviceCollection.insertOne(req.body).then(result => {
                 if (result.insertedCount > 0) {
                     res.send(result.ops[0])
@@ -49,17 +52,16 @@ client.connect(err => {
                 })
         })
 
-        // ============ [ For updating service ]==============
+        // ============ [ For updating Service ]==============
         app.patch('/update-service', (req, res) => {
             const { service_id } = req.query;
             const data = req.body;
             serviceCollection.updateOne(
                 { _id: ObjectID(service_id) },
-                {"set":{data}}
-                )
+                { $set: data }
+            )
                 .then(result => {
-                    console.log(result);
-                    res.send(result.deletedCount > 0)
+                    res.send(result.modifiedCount > 0) 
                 })
                 .catch(err => {
                     res.send(false)
@@ -67,7 +69,7 @@ client.connect(err => {
         })
 
         // ============ [ For deleting service ]==============
-        app.delete('/delete-service', (req, res) => {
+        app.put('/delete-service', (req, res) => {
             const { service_id } = req.query;
             serviceCollection.deleteOne({ _id: ObjectID(service_id) })
                 .then(result => {
@@ -104,11 +106,11 @@ client.connect(err => {
             const data = req.body;
             orderCollection.updateOne(
                 { _id: ObjectID(order_id) },
-                {"set":{data}}
-                )
+                { $set: data }
+            )
                 .then(result => {
                     console.log(result);
-                    res.send(result.deletedCount > 0)
+                    res.send(result.modifiedCount > 0)
                 })
                 .catch(err => {
                     res.send(false)
@@ -116,7 +118,7 @@ client.connect(err => {
         })
 
         // ============ [ For deleting order ]==============
-        app.delete('/delete-order', (req, res) => {
+        app.put('/delete-order', (req, res) => {
             const { order_id } = req.query;
             orderCollection.deleteOne({ _id: ObjectID(order_id) })
                 .then(result => {
