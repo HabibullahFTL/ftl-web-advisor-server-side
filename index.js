@@ -33,8 +33,9 @@ client.connect(err => {
     } else {
         // ============ [ For Creating new service ]==============
         app.post('/create-service', (req, res) => {
-            console.log(req.body);
-            serviceCollection.insertOne(req.body).then(result => {
+            const service = req.body;
+            service.createdAt = now;
+            serviceCollection.insertOne(service).then(result => {
                 if (result.insertedCount > 0) {
                     res.send(result.ops[0])
                 } else {
