@@ -53,6 +53,16 @@ client.connect(err => {
                 })
         })
 
+        // ============ [ For Showing Single services ]==============
+        app.get('/service', (req, res) => {
+            const { service_id } = req.query;
+            serviceCollection.find({_id: ObjectID(service_id)})
+                .sort({ _id: -1 })
+                .toArray((err, documents) => {
+                    res.send(documents[0])
+                })
+        })
+
         // ============ [ For updating Service ]==============
         app.patch('/update-service', (req, res) => {
             const { service_id } = req.query;
