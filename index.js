@@ -95,7 +95,7 @@ client.connect(err => {
         app.post('/place-order', (req, res) => {
             orderCollection.insertOne(req.body).then(result => {
                 if (result.insertedCount > 0) {
-                    res.send(result.ops[0])
+                    res.send(true)
                 } else {
                     res.send({ message: "Something went wrong" })
                 }
