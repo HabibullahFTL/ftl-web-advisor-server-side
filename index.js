@@ -27,6 +27,7 @@ client.connect(err => {
     const serviceCollection = client.db("ftl_web_advisor").collection("services");
     const orderCollection = client.db("ftl_web_advisor").collection("orders");
     const adminCollection = client.db("ftl_web_advisor").collection("admins");
+    const reviewCollection = client.db("ftl_web_advisor").collection("reviews");
 
     if (err) {
         console.log("there is an error");
@@ -168,6 +169,31 @@ client.connect(err => {
         app.put('/delete-admin', (req, res) => {
             const { admin_id } = req.query;
             adminCollection.deleteOne({ _id: ObjectID(admin_id) })
+                .then(result => {
+                    res.send(result.deletedCount > 0)
+                })
+                .catch(err => {
+                    res.send(false)
+                })
+        })
+
+        // ============ [ For adding new review ]==============
+        app.post('/add-review', (req, res) => {
+            const reviewDetails = req.body;
+            reviewDetails.addedAt = now;
+            reviewCollection.insertOne(reviewDetails).then(result => {
+                if (result.insertedCount > 0) {
+                    res.send(true)
+                } else {
+                    res.send({ message: "Something went wrong" })
+                }
+            })
+        })
+
+        // ============ [ For deleting review ]==============
+        app.put('/delete-review', (req, res) => {
+            const { review_id } = req.query;
+            reviewCollection.deleteOne({ _id: ObjectID(review_id) })
                 .then(result => {
                     res.send(result.deletedCount > 0)
                 })
