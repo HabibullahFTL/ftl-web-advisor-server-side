@@ -190,6 +190,15 @@ client.connect(err => {
             })
         })
 
+        // ============ [ For Showing All Review ]==============
+        app.get('/all-review', (req, res) => {
+            reviewCollection.find({})
+                .sort({ _id: -1 })
+                .toArray((err, documents) => {
+                    res.send(documents)
+                })
+        })
+
         // ============ [ For deleting review ]==============
         app.put('/delete-review', (req, res) => {
             const { review_id } = req.query;
