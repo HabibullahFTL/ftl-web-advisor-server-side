@@ -56,7 +56,7 @@ client.connect(err => {
         // ============ [ For Showing Single services ]==============
         app.get('/service', (req, res) => {
             const { service_id } = req.query;
-            serviceCollection.find({_id: ObjectID(service_id)})
+            serviceCollection.find({ _id: ObjectID(service_id) })
                 .sort({ _id: -1 })
                 .toArray((err, documents) => {
                     res.send(documents[0])
@@ -72,7 +72,7 @@ client.connect(err => {
                 { $set: data }
             )
                 .then(result => {
-                    res.send(result.modifiedCount > 0) 
+                    res.send(result.modifiedCount > 0)
                 })
                 .catch(err => {
                     res.send(false)
@@ -115,11 +115,11 @@ client.connect(err => {
 
         // ============ [ For updating order ]==============
         app.patch('/update-order', (req, res) => {
-            const { order_id } = req.query;
+            const { order_id, status } = req.query;
             const data = req.body;
             orderCollection.updateOne(
                 { _id: ObjectID(order_id) },
-                { $set: data }
+                { $set: { status: status } }
             )
                 .then(result => {
                     console.log(result);
@@ -140,6 +140,19 @@ client.connect(err => {
                 .catch(err => {
                     res.send(false)
                 })
+        })
+
+        // ============ [ For adding new admin ]==============
+        app.post('/add-admin', (req, res) => {
+            const adminInfo = req.body;
+            adminInfo.addedAt = now;
+            adminCollection.insertOne(adminInfo).then(result => {
+                if (result.insertedCount > 0) {
+                    res.send(true)
+                } else {
+                    res.send({ message: "Something went wrong" })
+                }
+            })
         })
 
     }
