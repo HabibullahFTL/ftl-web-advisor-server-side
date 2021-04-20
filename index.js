@@ -93,7 +93,9 @@ client.connect(err => {
 
         // ============ [ For placing new order ]==============
         app.post('/place-order', (req, res) => {
-            orderCollection.insertOne(req.body).then(result => {
+            const order = req.body;
+            order.orderedAt = now;
+            orderCollection.insertOne(order).then(result => {
                 if (result.insertedCount > 0) {
                     res.send(true)
                 } else {
