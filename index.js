@@ -155,6 +155,15 @@ client.connect(err => {
             })
         })
 
+        // ============ [ For Showing All Admin ]==============
+        app.get('/all-admin', (req, res) => {
+            adminCollection.find({})
+                .sort({ _id: -1 })
+                .toArray((err, documents) => {
+                    res.send(documents)
+                })
+        })
+
     }
 });
 
