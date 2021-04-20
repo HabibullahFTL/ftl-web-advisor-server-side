@@ -164,6 +164,18 @@ client.connect(err => {
                 })
         })
 
+        // ============ [ For deleting admin ]==============
+        app.put('/delete-admin', (req, res) => {
+            const { admin_id } = req.query;
+            adminCollection.deleteOne({ _id: ObjectID(admin_id) })
+                .then(result => {
+                    res.send(result.deletedCount > 0)
+                })
+                .catch(err => {
+                    res.send(false)
+                })
+        })
+
     }
 });
 
